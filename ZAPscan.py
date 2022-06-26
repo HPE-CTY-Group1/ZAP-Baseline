@@ -112,6 +112,10 @@ def main():
     os.remove('testreport.html')
 
     time.sleep(3)
-        
+
+    cmd2 = f'docker container prune -f'
+    proc_cmd2 = cmd2.split(' ')
+
+    subprocess.Popen(proc_cmd2, stdout=subprocess.PIPE)
 if __name__ == "__main__":
     main()
