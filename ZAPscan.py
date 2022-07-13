@@ -1,9 +1,13 @@
+#Authors : Mohit Raj, Shomik Ghosh
+
 from json import load
 import subprocess
 import os
-import smtplib
+import re
+
 import time
-import getpass
+
+import utilitymodule
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -11,15 +15,29 @@ load_dotenv()
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
-from email import encoders
+
 
 #getting current working directory path
 cwd_path = os.getcwd()
 
 #getting target site input
-target_site = input("Enter Target Site: ")
 
-def main():
+target_site = input("Enter Target Site: ")
+   # Regular expression for URL
+re_exp = ("((http|https)://)(www.)?" + "[a-zA-Z0-9@:%._\\+~#?&//=]" +
+            "{2,256}\\.[a-z]" + "{2,6}\\b([-a-zA-Z0-9@:%" + "._\\+~#?&//=]*)")
+exp = re.compile(re_exp)
+if (target_site == None):
+    print("Input string is empty")
+if(re.search(exp, target_site)):
+    print("Initiating Scan !")
+else:
+    print("Input URL is invalid!")
+    quit()
+    
+
+
+def testreport():
     #storing the command
     cmd = f'docker run -v {cwd_path}:/zap/wrk/:rw -t owasp/zap2docker-stable zap-baseline.py -t {target_site} -r testreport.html'
     proc_cmd = cmd.split(' ')
@@ -42,77 +60,12 @@ def main():
     else:
         print("[ERR] Test report generation failed")
 
-    #getting the source address from .env
-    fromaddr = os.getenv("FROMADDR")
+def sendmail():
 
-    #getting applicaton specific password of source address
-    email_pass= getpass.getpass(prompt='Enter password ')
-    
-    #input destination address
-    toaddr =input("Enter Destination email address: ")
-
+    utilitymodule.sendmail(target_site)
     
 
-    # instance of MIMEMultipart
-    msg = MIMEMultipart()
-
-    # storing the senders email address
-    msg['From'] = fromaddr
-
-    # storing the receivers email address
-    msg['To'] = toaddr
-
-    # storing the subject
-    msg['Subject'] = f"[REPORT] {target_site}"
-
-    # string to store the body of the mail
-    body = f"The report for site {target_site} is attached on this mail"
-
-    # attach the body with the msg instance
-    msg.attach(MIMEText(body, 'plain'))
-
-    # open the file to be sent
-    filename = "testreport.html"
-    attachment = open("testreport.html", "rb")
-
-    # instance of MIMEBase and named as p
-    p = MIMEBase('application', 'octet-stream')
-
-    # To change the payload into encoded form
-    p.set_payload((attachment).read())
-
-    # encode into base64
-    encoders.encode_base64(p)
-
-    p.add_header('Content-Disposition', "attachment; filename= %s" % filename)
-
-    # attach the instance 'p' to instance 'msg'
-    msg.attach(p)
-
-    # creates SMTP session
-    s = smtplib.SMTP('smtp.mail.yahoo.com', 587)
-
-    #    start TLS for security
-    s.starttls()
-
-    # Authentication
-    s.login(fromaddr, email_pass)
-
-    
-
-    # Converts the Multipart msg into a string
-    text = msg.as_string()
-
-    # sending the mail
-    s.sendmail(fromaddr, toaddr, text)
-
-    # terminating the session
-    s.quit()
-    
-    print("[LOG] Mail sent")
-
-    #close the attachment
-    attachment.close()
+def removedocs():
 
     #removing reports from the os
     os.remove('testreport.html')
@@ -132,4 +85,6 @@ def main():
     time.sleep(2)
 
 if __name__ == "__main__":
-    main()
+    testreport()
+    sendmail()
+    removedocs()
