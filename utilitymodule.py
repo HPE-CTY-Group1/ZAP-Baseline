@@ -1,4 +1,5 @@
 # Authors: Mohit Raj, Shomik Ghosh
+import re
 import os
 import smtplib
 import getpass
@@ -18,6 +19,13 @@ def sendmail(target_site):
     
     #input destination address
     toaddr =input("Enter Destination email address: ")
+    regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+    
+    if(re.fullmatch(regex, toaddr)):
+        print("Sending email...")
+    else:
+        print("Invalid Email")
+        quit()
 
     # instance of MIMEMultipart
     msg = MIMEMultipart()
