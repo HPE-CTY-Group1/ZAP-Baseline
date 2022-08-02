@@ -28,10 +28,10 @@ To run the scan follow the steps:
 
 ### Things our project does
 
-1.We take the target_website which we want to scan and run docker container as python subprocess.
-2.We check for invalid input through regex for all the input site.
-3.We display the subprocess output and stop as soon as the process stops.
-3.Report is generated as testreport.html and store it in os.
-4.Generated report is mailed, by taking sender mail id and password.
-5.Smtplib is used to provide a Smtp protocol for sending the mail and MIMEmultitext, MIMEmultipart, MIMEbase for attachments.
-6.Pruning the docker containers which are executed and stopped.
+1.We take the target_website which we want to scan and run docker container as python subprocess.__
+2.We check for invalid input through regex for all the input site.__
+3.We display the subprocess output and stop as soon as the process stops.__
+3.Report is generated as testreport.html and store it in os.__
+4.Generated report is mailed, by taking sender mail id and password.__
+5.Smtplib is used to provide a Smtp protocol for sending the mail and MIMEmultitext, MIMEmultipart, MIMEbase for attachments.__
+6.Pruning the docker containers which are executed and stopped.__
