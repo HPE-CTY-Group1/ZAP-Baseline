@@ -1,27 +1,37 @@
 # OWASP-ZAP-Baseline  Automation
 
-->We pulled the docker stable version image using command - 
-```powershell
-docker pull owasp/zap2docker-stable.
-```
-->We proceed to take input for the target website and store and run the following docker command as a python subprocess :-
-```powershell
-docker run -v {cwd_path}:/zap/wrk/:rw -t owasp/zap2docker-stable zap-baseline.py -t {target_site} -r testreport.html
-```
-->to see the output we must read the output of the running subprocess via stdout and stop as soon as the subprocess stops.
+## Getting Started
 
-->the generated report is stored in the os which is then sent over to the destination email specified by the user after entering the secure password for source email address which is authenticated.
+This is repository is for demonstration of Automated framework for ZAP baseline scan using the docker instance of ZAP to crawl the target site, sending the generated report to given destination email id and removing it form the host os.
 
-->smtplib is used to provide a smtp protocol for sending the mail and MIMEmultitext, MIMEmultipart, MIMEbase were used the vivid description is given below:-
-```powershell
-MIMEBase is just a base class. As the specification says: "Ordinarily you won’t create instances specifically of MIMEBase"
-MIMEText is for text (e.g. text/plain or text/html), if the whole message is in text format, or if a part of it is.
-MIMEMultipart is for saying "I have more than one part", and then listing the parts - you do that if you have attachments, you also do it to provide alternative versions of the same content (e.g. a plain text version plus an HTML version)
-```
-->Finally we are destroyed the testreport.html, ZAP.yaml files from the host os and the exited container from docker as well.
+### Prerequisites
 
-commmand to prune(destroy) the exited container was run in a similar way as the ZAP baseline command:-
-```powershell
-docker container prune -f
-```
-->The script is provided with comments at each step to enhance readability.
+* docker
+  ```sh
+   docker pull owasp/zap2docker-stable.
+  ```
+
+### Installation
+
+To run the scan follow the steps:
+
+1. Clone the repo
+   ```sh
+   git clone https://github.com/HPE-CTY-Group1/ZAP-Baseline.git
+   ```
+2.Add env file
+   ```sh
+   FROMADDR="testmohit2727@yahoo.com"
+   ```
+3. Run the docker image owasp/zap2docker-stable
+4. Use sample password for smtpl
+
+### Things our project does
+
+1.We take the target_website which we want to scan and run docker container as python subprocess.
+2.We check for invalid input through regex for all the input site.
+3.We display the subprocess output and stop as soon as the process stops.
+3.Report is generated as testreport.html and store it in os.
+4.Generated report is mailed, by taking sender mail id and password.
+5.Smtplib is used to provide a Smtp protocol for sending the mail and MIMEmultitext, MIMEmultipart, MIMEbase for attachments.
+6.Pruning the docker containers which are executed and stopped.
